@@ -5,5 +5,6 @@ export const userSchema = Joi.object({
         "string.empty": "Name can't be empty",
     }),
     email: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
+    role:Joi.string().required()
 })

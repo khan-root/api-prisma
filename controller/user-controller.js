@@ -5,21 +5,28 @@ import { userSchema } from "../validator/userValidator.js";
 import { CustomErrorHandler } from "../services/customErrorHandler.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/apiResponse.js";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; 
 
 export const createUser = asyncHandler(async(req, res, next)=>{
     const {error} = userSchema.validate(req.body)
     if(error){
         return next(error)
     }
-    const {name, email, password} = req.body
+    const {name, email, password, role} = req.body
     const findUser = await findUserByEmail(email)
     if(findUser){
         return next(CustomErrorHandler.alreadyExist("User already exist"))
     }
+
+    
     const newUser = await prisma.user.create({
         data:{
-            name, email, 
-            password:bcrypt.hashSync(password, 10)
+            name, 
+            email, 
+            password:bcrypt.hashSync(password, 10),
+            role
         }
     })
 
@@ -40,8 +47,20 @@ export const signin = asyncHandler(async(req, res, next)=>{
     if(!comparePassword){
         return next(CustomErrorHandler.invalidCredentials("Invalid credentials"))
     }
+     const token = jwt.sign(
+    {
+      id: findUser.id, // Include necessary user info in the payload
+      email: findUser.email
+    },
+    JWT_SECRET, 
+    { expiresIn: '1h' } // Token expiry time
+  );
+
+
+    // console.log('token', token)
+    // return
     return res.status(200).json(
-        new ApiResponse(findUser, "SUCCESSFUL", "Login Successfully")
+        new ApiResponse({...findUser, token}, "SUCCESSFUL", "Login Successfully")
     )
 })
 

@@ -25,5 +25,9 @@ export class CustomErrorHandler extends Error{
         return new CustomErrorHandler(400, message)
     }
 
+    static unAuthorized(message){
+        return new CustomErrorHandler(401, message)
+    }
+
 
 }

@@ -8,6 +8,6 @@ router.post('/create-user', createUser)
 router.post('/signin-user', signin)
 router.get('/user/', getSingleUser)
 router.get('/users/', getAllUser)
-router.delete('/user/:id', deleteUser)
+router.delete('/user/:id?', deleteUser)
 
 export default router

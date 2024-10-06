@@ -19,6 +19,7 @@ export const errorHandler = (err, req, res, next)=>{
     }
 
     if(err instanceof CustomErrorHandler){
+        console.log('err', err)
         statusCode = err.status;
         data = {
             ERROR_DESCRIPTION: err.message,
